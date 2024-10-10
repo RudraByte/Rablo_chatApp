@@ -21,19 +21,14 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<void> signUp(BuildContext context) async {
     try {
-      // Firebase Authentication Sign-Up
       UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
 
-      // Send phone OTP
       await sendPhoneOtp();
-
-      // Send email verification
       await sendEmailVerification(userCredential.user);
 
-      // Saving additional data (name, mobile) to Firestore
       await FirebaseFirestore.instance.collection('users').doc(userCredential.user?.uid).set({
         'name': nameController.text.trim(),
         'mobile': mobileController.text.trim(),
@@ -45,12 +40,10 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  // Send Phone OTP
   Future<void> sendPhoneOtp() async {
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: mobileController.text.trim(),
       verificationCompleted: (PhoneAuthCredential credential) async {
-        // Auto sign-in if verification is successful
         await FirebaseAuth.instance.signInWithCredential(credential);
       },
       verificationFailed: (FirebaseAuthException e) {
@@ -70,7 +63,6 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  // Verify Phone OTP
   Future<void> verifyPhoneOtp() async {
     try {
       final credential = PhoneAuthProvider.credential(
@@ -84,7 +76,6 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  // Send Email Verification
   Future<void> sendEmailVerification(User? user) async {
     if (user != null && !user.emailVerified) {
       await user.sendEmailVerification();
@@ -94,14 +85,12 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  // Check if Email is Verified
   Future<void> verifyEmail() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      await user.reload(); // reload to get the latest email verification status
+      await user.reload();
       if (user.emailVerified) {
         print('Email verified successfully!');
-        // Email is verified, proceed
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => SignInPage()),
@@ -172,7 +161,7 @@ class _SignUpPageState extends State<SignUpPage> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () => signUp(context),
-                child: const Text('Sign Up',style: TextStyle(color: Colors.black),),
+                child: const Text('Sign Up', style: TextStyle(color: Colors.black)),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                   backgroundColor: Colors.blue.shade300,
@@ -180,7 +169,6 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
 
-              // Phone OTP Section
               if (phoneOtpSent) ...[
                 const SizedBox(height: 20),
                 const Text('Enter Phone OTP', style: TextStyle(fontSize: 16)),
@@ -202,22 +190,19 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ],
 
-              // Email Verification Section
               if (emailVerificationSent) ...[
                 const SizedBox(height: 20),
                 const Text('Verify your email by clicking the link sent to your email.', style: TextStyle(fontSize: 16)),
                 ElevatedButton(
                   onPressed: () => verifyEmail(),
-                  
-                  child: const Text('I have verified my email',style: TextStyle(color: Colors.black),),
+                  child: const Text('I have verified my email', style: TextStyle(color: Colors.black)),
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12,horizontal: 20),
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                     backgroundColor: Colors.blue.shade300,
                   ),
                 ),
               ],
 
-              // Navigate to Sign In
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
