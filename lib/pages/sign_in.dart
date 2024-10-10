@@ -1,5 +1,4 @@
 import 'package:chat_app/pages/chats.dart';
-// import 'package:chat_app/pages/home.dart';
 import 'package:chat_app/pages/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,13 +9,11 @@ class SignInPage extends StatelessWidget {
 
   Future<void> signIn(BuildContext context) async {
     try {
-      // Firebase Authentication SignIn
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
 
-      // Navigate to HomePage after successful sign-in
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => ChatScreen()),
@@ -33,7 +30,7 @@ class SignInPage extends StatelessWidget {
         title: const Text(
           'Sign In',
           style: TextStyle(color: Colors.black),
-        ), // Changed text color to black
+        ),
         backgroundColor: Colors.blue.shade300,
       ),
       body: Padding(
@@ -48,7 +45,7 @@ class SignInPage extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black), // Changed color to black
+                    color: Colors.black),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
@@ -56,7 +53,7 @@ class SignInPage extends StatelessWidget {
                 'Please sign in to continue',
                 style: TextStyle(
                     fontSize: 16,
-                    color: Colors.black54), // Changed color to black
+                    color: Colors.black54),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
@@ -64,12 +61,10 @@ class SignInPage extends StatelessWidget {
                 controller: emailController,
                 decoration: InputDecoration(
                   labelText: 'Email',
-                  labelStyle: TextStyle(
-                      color: Colors.black), // Changed label color to black
+                  labelStyle: TextStyle(color: Colors.black),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.blue.shade300, width: 2.0),
+                    borderSide: BorderSide(color: Colors.blue.shade300, width: 2.0),
                   ),
                   prefixIcon: Icon(Icons.email, color: Colors.blue.shade300),
                 ),
@@ -80,12 +75,10 @@ class SignInPage extends StatelessWidget {
                 controller: passwordController,
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  labelStyle: TextStyle(
-                      color: Colors.black), // Changed label color to black
+                  labelStyle: TextStyle(color: Colors.black),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.blue.shade300, width: 2.0),
+                    borderSide: BorderSide(color: Colors.blue.shade300, width: 2.0),
                   ),
                   prefixIcon: Icon(Icons.lock, color: Colors.blue.shade300),
                 ),
@@ -95,10 +88,7 @@ class SignInPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () => signIn(context),
                 child: const Text('Sign In',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color:
-                            Colors.black)), // Kept text color black by default
+                    style: TextStyle(fontSize: 18, color: Colors.black)),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 12),
                   backgroundColor: Colors.blue.shade300,
@@ -109,7 +99,6 @@ class SignInPage extends StatelessWidget {
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
-                  // Navigate to SignUpPage if the user doesn't have an account
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => SignUpPage()),
@@ -117,9 +106,7 @@ class SignInPage extends StatelessWidget {
                 },
                 child: const Text(
                   'Don\'t have an account? Sign Up',
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black), // Changed text color to black
+                  style: TextStyle(fontSize: 16, color: Colors.black),
                 ),
               ),
             ],
