@@ -10,35 +10,30 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
-  final User? currentUser = FirebaseAuth.instance.currentUser; // Get current user
+  final User? currentUser = FirebaseAuth.instance.currentUser;
 
-  // Function to send the message
   Future<void> _sendMessage() async {
     if (_messageController.text.trim().isEmpty) return;
 
     await FirebaseFirestore.instance.collection('messages').add({
-      'senderUID': currentUser!.uid,             // Store user ID
-      'content': _messageController.text.trim(), // Store message content
-      'timestamp': FieldValue.serverTimestamp(), // Store timestamp
+      'senderUID': currentUser!.uid,
+      'content': _messageController.text.trim(),
+      'timestamp': FieldValue.serverTimestamp(),
     });
 
-    // Clear the text field after sending the message
     _messageController.clear();
   }
 
-  // Function to delete a message
   Future<void> _deleteMessage(String messageId) async {
     await FirebaseFirestore.instance.collection('messages').doc(messageId).delete();
   }
 
-  // Function to update a message
   Future<void> _editMessage(String messageId, String newContent) async {
     await FirebaseFirestore.instance.collection('messages').doc(messageId).update({
-      'content': newContent, // Update message content
+      'content': newContent,
     });
   }
 
-  // Function to show confirmation dialog with options
   Future<void> _showOptionsDialog(BuildContext context, String messageId, String currentContent) async {
     return showDialog(
       context: context,
@@ -50,25 +45,24 @@ class _ChatScreenState extends State<ChatScreen> {
             TextButton(
               child: Text("Cancel"),
               onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
+                Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: Text("Edit"),
               onPressed: () async {
-                // Prompt user for new message content
                 String? newContent = await _showEditDialog(context, currentContent);
                 if (newContent != null && newContent.trim().isNotEmpty) {
-                  await _editMessage(messageId, newContent); // Update message
+                  await _editMessage(messageId, newContent);
                 }
-                Navigator.of(context).pop(); // Close dialog
+                Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: Text("Delete"),
               onPressed: () async {
-                await _deleteMessage(messageId); // Delete the message
-                Navigator.of(context).pop(); // Close dialog after deletion
+                await _deleteMessage(messageId);
+                Navigator.of(context).pop();
               },
             ),
           ],
@@ -77,7 +71,6 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  // Function to show edit dialog
   Future<String?> _showEditDialog(BuildContext context, String currentContent) async {
     final TextEditingController _editController = TextEditingController(text: currentContent);
     return showDialog<String>(
@@ -93,13 +86,13 @@ class _ChatScreenState extends State<ChatScreen> {
             TextButton(
               child: Text("Cancel"),
               onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
+                Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: Text("Save"),
               onPressed: () {
-                Navigator.of(context).pop(_editController.text); // Return new content
+                Navigator.of(context).pop(_editController.text);
               },
             ),
           ],
@@ -118,10 +111,7 @@ class _ChatScreenState extends State<ChatScreen> {
           IconButton(
             icon: Icon(Icons.logout, color: Colors.black),
             onPressed: () async {
-              // Sign out the user
               await FirebaseAuth.instance.signOut();
-
-              // Navigate to SignInPage
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => SignInPage()),
@@ -134,11 +124,11 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter, // Start gradient from top center
-            end: Alignment.bottomCenter, // End gradient at bottom center
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
             colors: [
-              Colors.blue.shade200, // Start color
-              Colors.white, // End color
+              Colors.blue.shade200,
+              Colors.white,
             ],
           ),
         ),
@@ -148,7 +138,7 @@ class _ChatScreenState extends State<ChatScreen> {
               child: StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('messages')
-                    .orderBy('timestamp') // Display messages in chronological order
+                    .orderBy('timestamp')
                     .snapshots(),
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (!snapshot.hasData) {
@@ -168,12 +158,12 @@ class _ChatScreenState extends State<ChatScreen> {
                           alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
                           child: GestureDetector(
                             onLongPress: isCurrentUser
-                                ? () => _showOptionsDialog(context, message.id, message['content']) // Show options dialog
+                                ? () => _showOptionsDialog(context, message.id, message['content'])
                                 : null,
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                               decoration: BoxDecoration(
-                                color: isCurrentUser ? Colors.blue[300] : Colors.grey[300], // Use a lighter blue for current user messages
+                                color: isCurrentUser ? Colors.blue[300] : Colors.grey[300],
                                 borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(15),
                                   topRight: Radius.circular(15),
@@ -183,7 +173,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               ),
                               child: Text(
                                 message['content'],
-                                style: TextStyle(fontSize: 16, color: Colors.black), // Set text color to black
+                                style: TextStyle(fontSize: 16, color: Colors.black),
                               ),
                             ),
                           ),
@@ -215,7 +205,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     IconButton(
                       icon: Icon(Icons.send, color: Colors.blue),
-                      onPressed: _sendMessage, // Call _sendMessage on click
+                      onPressed: _sendMessage,
                     ),
                   ],
                 ),
